@@ -1,2 +1,4 @@
 *__pycache__
 *.ipynb_checkpoints/
+experiments/exported/saved_model/variables/variables.data-00000-of-00001
+experiments/exported/checkpoint/ckpt-0.data-00000-of-00001

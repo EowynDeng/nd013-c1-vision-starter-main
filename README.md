@@ -138,23 +138,94 @@ Finally, you can create a video of your model's inferences for any tf record fil
 python inference_video.py --labelmap_path label_map.pbtxt --model_path experiments/reference/exported/saved_model --tf_record_path /data/waymo/testing/segment-12200383401366682847_2552_140_2572_140_with_camera_labels.tfrecord --config_path experiments/reference/pipeline_new.config --output_path animation.gif
 ```
 
-## Submission Template
 
 ### Project overview
-This section should contain a brief description of the project and what we are trying to achieve. Why is object detection such an important component of self driving car systems?
+The goal of this project is to classify and segement the vehicle, pedestrain, and cyclist from given waymo dataset. This is used to train the use of CNN and parameter tuning.
+
 
 ### Set up
-This section should contain a brief description of the steps to follow to run the code for this repository.
+This is a Udacity project being done on an on-line workspace. However, Udacity does provide setup instructions for offline build. The requiements of system are: NVIDIA GPU with latest driver and docker/nvidia-docker.
+
+Build the image:
+```
+docker build -t project-dev -f Dockerfile .
+```
+Create container:
+```
+docker run --gpus all -v <PATH TO LOCAL PROJECT FOLDER>:/app/project/ --network=host -ti project-dev bash
+```
+install gsutil
+```
+curl https://sdk.cloud.google.com | bash
+gcloud auth login
+```
+
 
 ### Dataset
 #### Dataset analysis
-This section should contain a quantitative and qualitative description of the dataset. It should include images, charts and other visualizations.
+The dataset contins a series of images with RGB channels. A quick visualization can be shown below. The dataset does contain different weather (sunny, cloudy, raining) and places (city, suburban, neighborhood).
+![alt text](img/vehicle1.png)
+![alt text](img/vehicle2.png)
+![alt text](img/vehicle3.png)
+![alt text](img/vehicle4.png)
+![alt text](img/vehicle5.png)
+![alt text](img/vehicle6.png)
+![alt text](img/vehicle7.png)
+![alt text](img/vehicle8.png)
+![alt text](img/vehicle9.png)
+![alt text](img/vehicle10.png)
+
+
 #### Cross validation
-This section should detail the cross validation strategy and justify your approach.
+To make sure the validation process works or makes sense, I've tested to make sure the sample distribution in the trianing and validation sets are similar. Below are the histogram of the distribution of number of vehicles, pedestrain, and cyclist (from left to right) for training set and validation set:
+Training set distribution:
+![alt text](img/training_set.png)
+
+Validation set distribution:
+![alt text](img/val_set.png)
+
+Both have very similar distribution and should work well for the CNN network being trained.
+
 
 ### Training
 #### Reference experiment
-This section should detail the results of the reference experiment. It should includes training metrics and a detailed explanation of the algorithm's performances.
+The experiment started with the default setting which ended in very large losses (> 10) and converge very slow (not converge after 3200 steps).
+To improve the performance, I used a larger batch size of 4 instead of the original 2 (though I would use a larger batch size if the online workspace has more memory allocation). A very small batch size makes the start point of the training very randomly (sometimes at a very high loss). The model was also improved by pre-process some of the images to make the model more general. The final results of the model training can be found below. The model was able to converge within 2500 steps:
+
+Terminal output:
+![alt text](img/Training_terminal.JPG)
+
+Loss:
+![alt text](img/Loss.JPG)
+
+Learning rate:
+![alt text](img/Learning_rate.JPG)
+
+The evaluation of the performance is focusing on Precisions and Recalls:
+
+Precisions:
+![alt text](img/Precision.JPG)
+
+Recalls:
+![alt text](img/Recall.JPG)
 
 #### Improve on the reference
-This section should highlight the different strategies you adopted to improve your model. It should contain relevant figures and details of your findings.
+I've added three pre-process to the images in the experiments/pipeline_new.config file (as shown below). The basic idea is to randomly change the RGB values (regarding brightness, contrast, and RGB2Grey) to make the dataset more various. For instance: rgb2grey can help simulate night conditions; brightness change can simulate different lighting conditions; etc.
+
+```
+  data_augmentation_options {
+    random_rgb_to_gray {
+    probability: 0.2
+    }
+  }
+  data_augmentation_options {
+    random_adjust_brightness {
+    max_delta: 0.3
+    }
+  }
+  data_augmentation_options {
+    random_adjust_contrast {
+    min_delta: 0.6
+    max_delta: 1.0
+    }```
+

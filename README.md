@@ -164,6 +164,7 @@ gcloud auth login
 ### Dataset
 #### Dataset analysis
 The dataset contins a series of images with RGB channels. A quick visualization can be shown below. The dataset does contain different weather (sunny, cloudy, raining) and places (city, suburban, neighborhood).
+
 ![alt text](img/vehicle1.png)
 ![alt text](img/vehicle2.png)
 ![alt text](img/vehicle3.png)
@@ -178,10 +179,13 @@ The dataset contins a series of images with RGB channels. A quick visualization 
 
 #### Cross validation
 To make sure the validation process works or makes sense, I've tested to make sure the sample distribution in the trianing and validation sets are similar. Below are the histogram of the distribution of number of vehicles, pedestrain, and cyclist (from left to right) for training set and validation set:
+
 Training set distribution:
+
 ![alt text](img/training_set.png)
 
 Validation set distribution:
+
 ![alt text](img/val_set.png)
 
 Both have very similar distribution and should work well for the CNN network being trained.

@@ -193,8 +193,7 @@ Both have very similar distribution and should work well for the CNN network bei
 
 ### Training
 #### Reference experiment
-The experiment started with the default setting which ended in very large losses (> 10) and converge very slow (not converge after 3200 steps).
-To improve the performance, I used a larger batch size of 4 instead of the original 2 (though I would use a larger batch size if the online workspace has more memory allocation). A very small batch size makes the start point of the training very randomly (sometimes at a very high loss). The model was also improved by pre-process some of the images to make the model more general. The final results of the model training can be found below. The model was able to converge within 2500 steps. One thing to notice is the small backward line that happend around 1600 steps. The training was interrupted around 1680 steps, and I had to re-initiate the training process. Thus the TensorBoard is trying to link 1680 back to 1600.
+The experiment started with the default setting which ended in very large losses (> 10) and converge very slow (not converge after 2500 steps).
 
 Terminal output:
 ![alt text](img/Training_terminal.JPG)
@@ -213,9 +212,11 @@ Precisions:
 Recalls:
 ![alt text](img/Recall.JPG)
 
-The precisions and recalls are very poor at this point. This may indicate some modification of the base model is needed to improve. Also, as mentioned, if could be trained with a larger batch size, the performance of the final model can be improved significantly.
+The precisions and recalls are very poor at this point. This may indicate some modification of the base model is needed to improve. Also, if could be trained with a larger batch size, the performance of the final model can be improved significantly.
 
 #### Improve on the reference
+To improve the performance, I used a larger batch size of 8 instead of the original 2 (though I would use a larger batch size if the online workspace has more memory allocation). A very small batch size makes the start point of the training very randomly (sometimes at a very high loss). The model was also improved by pre-process some of the images to make the model more general. The final results of the model training can be found below. The model was able to converge within 2500 steps. One thing to notice is the small backward line that happend around 1000 steps. The training was interrupted around 1600 steps, and I had to re-initiate the training process. Thus the TensorBoard is trying to link 1200 back to 1000.
+
 I've added three pre-process to the images in the experiments/pipeline_new.config file (as shown below). The basic idea is to randomly change the RGB values (regarding brightness, contrast, and RGB2Grey) to make the dataset more various. For instance: rgb2grey can help simulate night conditions; brightness change can simulate different lighting conditions; etc.
 
 ```
@@ -233,5 +234,17 @@ I've added three pre-process to the images in the experiments/pipeline_new.confi
     random_adjust_contrast {
     min_delta: 0.6
     max_delta: 1.0
-    }```
+    }
+```
+
+The final results can be found below:
+
+Precisions and recalls:
+![alt text](img/Precision&recall_2.JPG)
+
+Loss and learning rate:
+![alt text](img/loss&learning_rate_2.JPG)
+
+Based on the precision and recall, the performance was significantly better with the modification mentioned above. If the training process can be allocated with more memory, I would try a larger batch size which should help further improve the performance.
+
 
